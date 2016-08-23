@@ -18,18 +18,13 @@ function Authors_Books() {
 
 
 router.get('/', function(req, res, next) {
-  // get all authors from Authors
-  // THEN for each author, go get all of their book ids from Authors_Books
-  // THEN go get all that author's books
-  // AND add the array of books to the author object as 'books'
-  // render the appropriate template
-  // pass an array of authors to the view using locals
-
-  // EXAMPLE: { first_name: 'Laura', last_name: 'Lou', bio: 'her bio', books: [ this should be all of her book objects ]}
+  queries.getAuthorsAndBooks().then(function (results) {
+    res.render('authors/index', {authors: results})
+  })
 });
 
 router.get('/new', function(req, res, next) {
-  Books().select().then(function (books) {
+  Books().then(function (books) {
     res.render('authors/new', {books: books});
   })
 });
@@ -47,7 +42,7 @@ router.post('/', function (req, res, next) {
 router.get('/:id/delete', function (req, res, next) {
   Authors().where('id', req.params.id).first().then(function (author) {
     queries.getAuthorBooks(author).then(function (authorBooks) {
-      Books().select().then(function (books) {
+      Books().then(function (books) {
         res.render('authors/delete', {author: author, author_books: authorBooks, books: books });
       })
     })
@@ -64,11 +59,11 @@ router.post('/:id/delete', function (req, res, next) {
 })
 
 router.get('/:id/edit', function (req, res, next) {
-  queries.getAuthorBooks(req.params.id).then(function (authorInfo) {
-    queries.getBooks().then(function (books) {
+  queries.getAuthorBooks(req.params.id).then(function (author) {
+    Books().then(function (books) {
       res.render('authors/edit', {
-        author: authorInfo.author,
-        author_books: authorInfo.books,
+        author: author,
+        author_books: author.books,
         books: books
       })
     })
@@ -87,8 +82,8 @@ router.post('/:id', function (req, res, next) {
 })
 
 router.get('/:id', function (req, res, next) {
-  queries.getAuthorBooks(req.params.id).then(function (authorInfo) {
-    res.render('authors/show', { author: authorInfo.author, books: authorInfo.books})
+  queries.getAuthorBooks(req.params.id).then(function (author) {
+    res.render('authors/show', { author: author, books: author.books})
   })
 })
 
