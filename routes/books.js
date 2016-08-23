@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 var knex = require('../db/knex');
-var helpers = require('../lib/helpers')
+var queries = require('../lib/queries')
 
 function Books() {
   return knex('books');
@@ -55,7 +55,7 @@ router.get('/:id/edit', function(req, res, next) {
 });
 
 router.get('/:id', function(req, res, next) {
-  // your code here 
+  // your code here
 });
 
 router.post('/:id', function(req, res, next) {
